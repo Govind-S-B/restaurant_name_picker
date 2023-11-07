@@ -3,11 +3,11 @@ from langchain.llms import Ollama
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
 
-llm = Ollama(model="zephyr",
+llm = Ollama(model="dolphin2.2-mistral",
              temperature="0.6")
 
-llm_mistral = Ollama(model="dolphin2.2-mistral",
-                     temperature="0")
+llm_low_temp = Ollama(model="dolphin2.2-mistral",
+                      temperature="0")
 
 
 def get_restaurant_name_and_menu(cuisine):
@@ -42,7 +42,7 @@ def get_restaurant_name_and_menu(cuisine):
     )
 
     restaurant_name_clean_up_chain = LLMChain(
-        llm=llm_mistral, prompt=name_clean_up_template, output_key="cleaned_name")
+        llm=llm_low_temp, prompt=name_clean_up_template, output_key="cleaned_name")
 
     # menu generation chain
 
@@ -72,7 +72,7 @@ def get_restaurant_name_and_menu(cuisine):
     )
 
     restaurant_menu_clean_up_chain = LLMChain(
-        llm=llm_mistral, prompt=menu_clean_up_template, output_key="cleaned_menu")
+        llm=llm_low_temp, prompt=menu_clean_up_template, output_key="cleaned_menu")
 
     chain = SequentialChain(
         chains=[restaurant_name_chain, restaurant_name_clean_up_chain,
@@ -85,14 +85,17 @@ def get_restaurant_name_and_menu(cuisine):
     })
 
     return {
-        "name": chain_output["restaurant_name"],
-        "clean_name": chain_output["cleaned_name"],
-        "menu": chain_output["menu_items"],
-        "cleaned_menu": chain_output["cleaned_menu"]
+        "name": chain_output["cleaned_name"],
+        "menu": chain_output["cleaned_menu"].strip().split(",")
+
+        # "name": chain_output["restaurant_name"],
+        # "clean_name": chain_output["cleaned_name"],
+        # "menu": chain_output["menu_items"],
+        # "cleaned_menu": chain_output["cleaned_menu"]
     }
 
 
-if __name__ == "__main__":
-    for i in range(20):
-        data = get_restaurant_name_and_menu("mexican italian fusion")
-        print(json.dumps(data, indent=4))
+# if __name__ == "__main__":
+#     for i in range(2):
+#         data = get_restaurant_name_and_menu("mexican italian fusion")
+#         print(json.dumps(data, indent=4))
