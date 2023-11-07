@@ -1,4 +1,3 @@
-import json
 from langchain.llms import Ollama
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
