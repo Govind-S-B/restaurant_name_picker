@@ -9,7 +9,7 @@ llm = Ollama(model="dolphin2.2-mistral",
 
 memory = ConversationBufferWindowMemory(k=10)
 
-chain = ConversationChain(llm=llm)
+chain = ConversationChain(llm=llm, memory=memory)
 
 while True:
     print(f"""AI : {chain.run(input("User : "))}""")
